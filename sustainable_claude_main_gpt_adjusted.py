@@ -622,7 +622,56 @@ for r in table_rows:
 table_html += "</tbody></table>"
 st.markdown(table_html, unsafe_allow_html=True)
 
+st.markdown('<div class="section-label">Allocation Breakdown</div>', unsafe_allow_html=True)
 
+bar_col1, bar_col2, bar_col3 = st.columns(3)
+
+def alloc_card_html(title, w1, w2, name1, name2):
+    c1, c2 = "#52c98a", "#3b82f6"
+    p1 = f"{w1*100:.1f}%"
+    p2 = f"{w2*100:.1f}%"
+    return f"""
+    <div class="card">
+      <div style="font-size:11px;font-weight:600;letter-spacing:0.12em;
+                  text-transform:uppercase;color:#52c98a;margin-bottom:14px;">
+        {title}
+      </div>
+      <div class="bar-row">
+        <div class="bar-label-row">
+          <span style="color:{c1};">{name1}</span>
+          <span style="color:{c1};font-family:'JetBrains Mono',monospace;">{p1}</span>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width:{p1};background:linear-gradient(90deg,#1f6b42,{c1});"></div>
+        </div>
+      </div>
+      <div class="bar-row" style="margin-top:12px;">
+        <div class="bar-label-row">
+          <span style="color:{c2};">{name2}</span>
+          <span style="color:{c2};font-family:'JetBrains Mono',monospace;">{p2}</span>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width:{p2};background:linear-gradient(90deg,#1e40af,{c2});"></div>
+        </div>
+      </div>
+    </div>"""
+
+with bar_col1:
+    st.markdown(
+        alloc_card_html("✅ ESG Constrained", w1_esg, 1-w1_esg, asset1_name, asset2_name),
+        unsafe_allow_html=True)
+
+with bar_col2:
+    st.markdown(
+        alloc_card_html("📈 Unconstrained", w1_all, 1-w1_all, asset1_name, asset2_name),
+        unsafe_allow_html=True)
+
+with bar_col3:
+    st.markdown(
+        alloc_card_html("🛡️ Min Variance", w1_mv, 1-w1_mv, asset1_name, asset2_name),
+        unsafe_allow_html=True)
+
+st.markdown('<hr class="fancy-divider">', unsafe_allow_html=True)
 # ──────────────────────────────────────────────────────────
 # SECTION 3 · IMPACT OF ESG CONSTRAINT
 # ──────────────────────────────────────────────────────────
