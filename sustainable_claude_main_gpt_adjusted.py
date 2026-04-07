@@ -450,11 +450,78 @@ weights_ok = True
 w_e = w_s = w_g = 33
 
 if esg_method == "Separate E, S, and G Pillars":
-    sb.markdown("**Pillar Weights (must sum to 100%)**")
+    sb.markdown("**Pillar Weights**")
+
+    weight_method = sb.radio(
+        "How would you like to set pillar weights?",
+        ["Manual Entry", "Materiality Assessment"],
+        key="weight_method"
+    )
+
+    # ── MATERIALITY ASSESSMENT ──────────────────────────
+    if weight_method == "Materiality Assessment":
+
+        TOPICS = {
+            "Climate change & emissions":   "E",
+            "Water & resource scarcity":    "E",
+            "Deforestation & biodiversity": "E",
+            "Pollution & waste":            "E",
+            "Labour rights & fair pay":     "S",
+            "Supply chain ethics":          "S",
+            "Community impact":             "S",
+            "Diversity & inclusion":        "S",
+            "Board independence":           "G",
+            "Executive pay":                "G",
+            "Anti-corruption":              "G",
+            "Transparency & reporting":     "G",
+        }
+
+        sb.caption(
+            "Select the **4 ESG issues** that matter most to you. "
+            "Your choices will suggest pillar weights automatically."
+        )
+
+        selected = sb.multiselect(
+            "Your top 4 ESG issues:",
+            list(TOPICS.keys()),
+            max_selections=4,
+            key="mat_topics"
+        )
+
+        # Count selections per pillar
+        counts = {"E": 0, "S": 0, "G": 0}
+        for topic in selected:
+            counts[TOPICS[topic]] += 1
+
+        # Apply 10% floor and normalise to suggested weights
+        floor = 0.10
+        raw = {k: max(counts[k], floor) for k in counts}
+        total = sum(raw.values())
+        sug_e = round((raw["E"] / total) * 100)
+        sug_s = round((raw["S"] / total) * 100)
+        sug_g = 100 - sug_e - sug_s  # ensure exact 100
+
+        if len(selected) == 4:
+            sb.success(
+                f"Suggested weights — "
+                f"E: **{sug_e}%** · S: **{sug_s}%** · G: **{sug_g}%**"
+            )
+        else:
+            sb.caption(f"{4 - len(selected)} more selection(s) needed.")
+            sug_e, sug_s, sug_g = 34, 33, 33  # neutral defaults
+
+        sb.markdown("**Review & adjust if needed:**")
+
+    else:
+        # Manual defaults
+        sug_e, sug_s, sug_g = 34, 33, 33
+
+    # ── EDITABLE WEIGHT INPUTS (shared by both paths) ──
     cw1, cw2, cw3 = sb.columns(3)
-    w_e = cw1.number_input("E %", 0, 100, 34, key="we")
-    w_s = cw2.number_input("S %", 0, 100, 33, key="ws")
-    w_g = cw3.number_input("G %", 0, 100, 33, key="wg")
+    w_e = cw1.number_input("E %", 0, 100, sug_e, key="we")
+    w_s = cw2.number_input("S %", 0, 100, sug_s, key="ws")
+    w_g = cw3.number_input("G %", 0, 100, sug_g, key="wg")
+
     weights_ok = (w_e + w_s + w_g) == 100
     if not weights_ok:
         sb.warning(f"Weights sum to {w_e+w_s+w_g}% — must equal 100%.")
