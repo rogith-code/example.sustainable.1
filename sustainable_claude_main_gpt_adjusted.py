@@ -450,15 +450,9 @@ elif st.session_state.stage == 0:
 # ── Header (shown on stages 1-5) ───────────────────────────
 else:
     st.markdown(
-        f"""<div style="display:flex;align-items:center;gap:14px;padding:8px 0 16px;">
+        f"""<div style="padding:8px 0 16px;">
               <img src="data:image/png;base64,{LOGO_B64}"
                    style="height:52px;object-fit:contain;" alt="Ethos Invest"/>
-              <div>
-                <div style="font-size:18px;font-weight:700;color:#f5f7fb;
-                            letter-spacing:-0.03em;line-height:1;">Ethos Invest</div>
-                <div style="font-size:12px;color:#52c98a;font-weight:600;
-                            letter-spacing:0.04em;margin-top:2px;">Invest with purpose.</div>
-              </div>
             </div>""",unsafe_allow_html=True)
 
     # Progress stepper (no wrapper card, no dividers)
