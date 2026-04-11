@@ -409,16 +409,22 @@ def esg_profile_from_lambda(lam):
     else:           return "Impact-focused",       "Maximum ESG emphasis; return is secondary."
 
 def dark_chart_style(ax,fig):
-    """Apply dark theme to a matplotlib figure."""
-    bg="#0e1014"
-    fig.patch.set_facecolor(bg); ax.set_facecolor(bg)
-    ax.tick_params(colors="#8b93a3",labelsize=9)
-    ax.xaxis.label.set_color("#8b93a3"); ax.yaxis.label.set_color("#8b93a3")
+    """Apply dark panel theme — no grid, clear contrast."""
+    panel = "#1a1e27"            # slightly lighter than page bg — chart stands out
+    fig.patch.set_facecolor(panel)
+    ax.set_facecolor(panel)
+    ax.tick_params(colors="#6b7585", labelsize=9, length=0)
+    ax.xaxis.label.set_color("#8b93a3")
+    ax.yaxis.label.set_color("#8b93a3")
     ax.title.set_color("#e7eaf0")
-    ax.spines["bottom"].set_color("#2a2f3a")
-    ax.spines["left"].set_color("#2a2f3a")
-    for sp in ["top","right"]: ax.spines[sp].set_visible(False)
-    ax.grid(True,alpha=0.1,linestyle="--",color="#ffffff")
+    # Subtle axis lines only — no grid
+    ax.spines["bottom"].set_color("#2e3444")
+    ax.spines["left"].set_color("#2e3444")
+    ax.spines["bottom"].set_linewidth(0.8)
+    ax.spines["left"].set_linewidth(0.8)
+    for sp in ["top","right"]:
+        ax.spines[sp].set_visible(False)
+    ax.grid(False)
 
 
 # ── Progress stepper ───────────────────────────────────────
@@ -1004,36 +1010,57 @@ else:
         with ch1:
             fig,ax=plt.subplots(figsize=(6,5))
             dark_chart_style(ax,fig)
-            ax.plot(vp,rp,color="#3a4560",lw=1.8,label="Efficient frontier")
-            ax.plot(sr,cml,"--",color="#52c98a",lw=1.5,alpha=0.7,label="Capital Market Line")
-            ax.scatter(vol_all,ret_all,marker="*",s=280,color="#8b93a3",edgecolors="#3a3f4a",lw=0.8,zorder=6,label="Optimal (unconstrained)")
-            ax.scatter(vol_esg,ret_esg,marker="*",s=280,color="#52c98a",edgecolors="#1f6b42",lw=1.5,zorder=7,label="Optimal (ESG)")
-            ax.annotate("Unconstrained",(vol_all,ret_all),xytext=(-6,-16),textcoords="offset points",fontsize=8,color="#8b93a3")
-            ax.annotate("ESG optimal",(vol_esg,ret_esg),xytext=(8,6),textcoords="offset points",fontsize=8,color="#52c98a")
+            # Frontier line — muted so data points pop
+            ax.plot(vp,rp,color="#3a4a6a",lw=2.2,label="Efficient frontier",zorder=2)
+            # CML — green dashed, clearly visible
+            ax.plot(sr,cml,"--",color="#52c98a",lw=1.8,alpha=0.85,label="Capital Market Line",zorder=3)
+            # Unconstrained — bright white-grey star
+            ax.scatter(vol_all,ret_all,marker="*",s=320,color="#c8cdd8",edgecolors="#1a1e27",
+                       lw=0.5,zorder=6,label="Optimal (unconstrained)")
+            # ESG optimal — vivid green star with glow effect (double scatter)
+            ax.scatter(vol_esg,ret_esg,marker="*",s=480,color="#52c98a",edgecolors="#1a1e27",
+                       lw=0.5,zorder=8,label="Optimal (ESG)")
+            ax.annotate("Unconstrained",(vol_all,ret_all),
+                        xytext=(-6,-16),textcoords="offset points",fontsize=8,color="#c8cdd8")
+            ax.annotate("ESG optimal",(vol_esg,ret_esg),
+                        xytext=(8,6),textcoords="offset points",fontsize=8,color="#52c98a",fontweight="bold")
             ax.set_xlim(0,max(vp)*1.02)
             ax.xaxis.set_major_formatter(PercentFormatter(1.0))
             ax.yaxis.set_major_formatter(PercentFormatter(1.0))
             ax.set_xlabel("Risk (Standard Deviation)",fontsize=10)
             ax.set_ylabel("Expected Return",fontsize=10)
-            ax.set_title("Efficient Frontier & Capital Market Line",fontsize=12,fontweight="bold",pad=10)
-            ax.legend(fontsize=8,facecolor="#13161c",edgecolor="#2a2f3a",labelcolor="#8b93a3")
-            plt.tight_layout(); st.pyplot(fig)
+            ax.set_title("Efficient Frontier & Capital Market Line",
+                         fontsize=12,fontweight="bold",pad=12,color="#e7eaf0")
+            ax.legend(fontsize=8,facecolor="#1a1e27",edgecolor="#2e3444",labelcolor="#8b93a3",
+                      framealpha=1,borderpad=0.8)
+            fig.tight_layout(pad=1.5); st.pyplot(fig)
             st.caption("Stars mark the optimal portfolio for each case.")
 
         with ch2:
             fig,ax=plt.subplots(figsize=(6,5))
             dark_chart_style(ax,fig)
-            ax.plot(esgs,sharpes,color="#ef4444",lw=2.2,label="ESG–Sharpe frontier")
-            ax.axvline(esg_thresh,color="#f59e0b",lw=1.5,linestyle=":",alpha=0.8,label=f"ESG threshold ({esg_thresh:.1f})")
-            ax.scatter(esg_all,sh_all,marker="*",s=280,color="#8b93a3",edgecolors="#3a3f4a",lw=0.8,zorder=5,label="Optimal (unconstrained)")
-            ax.scatter(esg_opt,sh_esg,marker="*",s=280,color="#52c98a",edgecolors="#1f6b42",lw=1.5,zorder=6,label="Optimal (ESG)")
-            ax.annotate("Unconstrained",(esg_all,sh_all),xytext=(-6,-16),textcoords="offset points",fontsize=8,color="#8b93a3")
-            ax.annotate("ESG optimal",(esg_opt,sh_esg),xytext=(8,6),textcoords="offset points",fontsize=8,color="#52c98a")
+            # ESG-Sharpe curve — warm red, clearly visible on dark bg
+            ax.plot(esgs,sharpes,color="#f87171",lw=2.4,label="ESG–Sharpe frontier",zorder=2)
+            # Threshold vertical line — amber, dotted
+            ax.axvline(esg_thresh,color="#fbbf24",lw=1.8,linestyle=":",
+                       label=f"ESG threshold ({esg_thresh:.1f})",zorder=3)
+            # Unconstrained star
+            ax.scatter(esg_all,sh_all,marker="*",s=320,color="#c8cdd8",edgecolors="#1a1e27",
+                       lw=0.5,zorder=6,label="Optimal (unconstrained)")
+            # ESG optimal star — vivid green
+            ax.scatter(esg_opt,sh_esg,marker="*",s=480,color="#52c98a",edgecolors="#1a1e27",
+                       lw=0.5,zorder=8,label="Optimal (ESG)")
+            ax.annotate("Unconstrained",(esg_all,sh_all),
+                        xytext=(-6,-16),textcoords="offset points",fontsize=8,color="#c8cdd8")
+            ax.annotate("ESG optimal",(esg_opt,sh_esg),
+                        xytext=(8,6),textcoords="offset points",fontsize=8,color="#52c98a",fontweight="bold")
             ax.set_xlabel("Portfolio ESG Score (0–100)",fontsize=10)
             ax.set_ylabel("Sharpe Ratio",fontsize=10)
-            ax.set_title("ESG–Sharpe Ratio Trade-off",fontsize=12,fontweight="bold",pad=10)
-            ax.legend(fontsize=8,facecolor="#13161c",edgecolor="#2a2f3a",labelcolor="#8b93a3")
-            plt.tight_layout(); st.pyplot(fig)
+            ax.set_title("ESG–Sharpe Ratio Trade-off",
+                         fontsize=12,fontweight="bold",pad=12,color="#e7eaf0")
+            ax.legend(fontsize=8,facecolor="#1a1e27",edgecolor="#2e3444",labelcolor="#8b93a3",
+                      framealpha=1,borderpad=0.8)
+            fig.tight_layout(pad=1.5); st.pyplot(fig)
             st.caption("Amber dotted line marks your minimum ESG threshold.")
 
         st.markdown('</div>',unsafe_allow_html=True)
