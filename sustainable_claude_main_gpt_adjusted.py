@@ -866,7 +866,6 @@ else:
               <div class="mini-card-title">Asset Allocation</div>
               {alloc_bar_html(w1_esg,1-w1_esg,n1,n2)}
             </div>""",unsafe_allow_html=True)
-
 if w1_esg >= 0.999:
             st.markdown(f"""
             <div class="info-box" style="margin-top:10px;">
@@ -885,7 +884,6 @@ if w1_esg >= 0.999:
               your risk aversion and ESG preference makes holding any amount of {n1}
               suboptimal. Reducing λ will reintroduce {n1} into the portfolio.
             </div>""", unsafe_allow_html=True)
-        st.markdown('</div>',unsafe_allow_html=True)
         
 
         st.markdown("<div style='height:4px;'></div>",unsafe_allow_html=True)
