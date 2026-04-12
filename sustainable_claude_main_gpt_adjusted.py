@@ -869,7 +869,7 @@ else:
 if w1_esg >= 0.999:
             corner_html = f'<div class="info-box" style="margin-top:10px;"><strong>Corner solution:</strong> At your current ESG preference (λ = {lam:.2f}), the optimal portfolio holds 100% in <strong>{n1}</strong> and nothing in <strong>{n2}</strong>. This is not a bug — it means the combined effect of your risk aversion and ESG preference makes holding any amount of {n2} suboptimal. Reducing λ will reintroduce {n2} into the portfolio.</div>'
             st.markdown(corner_html, unsafe_allow_html=True)
-        elif w1_esg <= 0.001:
+elif w1_esg <= 0.001:
             corner_html = f'<div class="info-box" style="margin-top:10px;"><strong>Corner solution:</strong> At your current ESG preference (λ = {lam:.2f}), the optimal portfolio holds 100% in <strong>{n2}</strong> and nothing in <strong>{n1}</strong>. This is not a bug — it means the combined effect of your risk aversion and ESG preference makes holding any amount of {n1} suboptimal. Reducing λ will reintroduce {n1} into the portfolio.</div>'
             st.markdown(corner_html, unsafe_allow_html=True)
         
