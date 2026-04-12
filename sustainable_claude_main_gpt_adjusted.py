@@ -867,7 +867,26 @@ else:
               {alloc_bar_html(w1_esg,1-w1_esg,n1,n2)}
             </div>""",unsafe_allow_html=True)
 
+f w1_esg >= 0.999:
+            st.markdown(f"""
+            <div class="info-box" style="margin-top:10px;">
+              <strong>Corner solution:</strong> At your current ESG preference (λ = {lam:.2f}),
+              the optimal portfolio holds 100% in <strong>{n1}</strong> and nothing in
+              <strong>{n2}</strong>. This is not a bug — it means the combined effect of
+              your risk aversion and ESG preference makes holding any amount of {n2}
+              suboptimal. Reducing λ will reintroduce {n2} into the portfolio.
+            </div>""", unsafe_allow_html=True)
+        elif w1_esg <= 0.001:
+            st.markdown(f"""
+            <div class="info-box" style="margin-top:10px;">
+              <strong>Corner solution:</strong> At your current ESG preference (λ = {lam:.2f}),
+              the optimal portfolio holds 100% in <strong>{n2}</strong> and nothing in
+              <strong>{n1}</strong>. This is not a bug — it means the combined effect of
+              your risk aversion and ESG preference makes holding any amount of {n1}
+              suboptimal. Reducing λ will reintroduce {n1} into the portfolio.
+            </div>""", unsafe_allow_html=True)
         st.markdown('</div>',unsafe_allow_html=True)
+        
 
         st.markdown("<div style='height:4px;'></div>",unsafe_allow_html=True)
 
