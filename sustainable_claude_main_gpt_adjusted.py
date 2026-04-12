@@ -867,7 +867,7 @@ else:
               {alloc_bar_html(w1_esg,1-w1_esg,n1,n2)}
             </div>""",unsafe_allow_html=True)
 
-f w1_esg >= 0.999:
+if w1_esg >= 0.999:
             st.markdown(f"""
             <div class="info-box" style="margin-top:10px;">
               <strong>Corner solution:</strong> At your current ESG preference (λ = {lam:.2f}),
