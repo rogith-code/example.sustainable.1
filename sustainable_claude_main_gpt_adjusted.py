@@ -874,7 +874,7 @@ elif w1_esg <= 0.001:
             st.markdown(corner_html, unsafe_allow_html=True)
         
 
-        st.markdown("<div style='height:4px;'></div>",unsafe_allow_html=True)
+st.markdown("<div style='height:4px;'></div>",unsafe_allow_html=True)
 
         # ── LAYER 2: COMPARISON + IMPACT (side by side) ───
         cmp_col, imp_col = st.columns([1.6, 1], gap="large")
